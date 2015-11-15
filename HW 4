@@ -1,0 +1,45 @@
+##Program 4
+
+
+stringA = input("Enter a string. ")
+stringB = input("Enter a second string. ")
+
+stringAlen = len(stringA)
+stringBlen = len(stringB)
+
+for i in range(stringAlen):
+    j = 0
+    k = 0
+    while (stringA[i+k] == stringB[j+k]):
+        k += 1
+        if (i+k == stringAlen or j+k == stringBlen):
+            break
+    if k == stringBlen:
+        print ("The same substring,", stringB+ ", was found starting at position", i)
+
+        
+for i in range(stringAlen):
+    j = 0
+    k = 0
+    counter = 0
+    while (counter < 2):
+        if (stringA[i+k] == stringB[j+k]):
+            k += 1
+        else:
+            counter += 1
+            k += 1
+        if (i+k == stringAlen or j+k == stringBlen or counter >= 2):
+            break
+    if counter < 2 and k == stringBlen and counter != 0:
+        print ("The substring,", stringB+ ", was almost found starting at position", i)
+
+
+for i in range(stringAlen-1, 0, -1):
+    j = 0
+    k = 0
+    while (stringA[i-k] == stringB[j+k]):
+        k += 1
+        if (i-k == -1 or j+k == stringBlen):
+            break
+    if k == stringBlen:
+        print ("The reverse of the second substring,", stringB+ ", was found starting at position", i)
