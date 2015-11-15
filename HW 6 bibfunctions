@@ -1,0 +1,129 @@
+emptyline  = '\n'
+entries = {}
+codelist = []
+
+count = {}  
+entrycount=0
+
+journallist = []
+
+def askfile(question):
+    response=None
+    while response==None:
+        response=input(question)
+    return response
+
+
+def code(INFILE,OUTFILE,SOUTFILE):
+    global entries
+    global codelist
+    for line in INFILE:
+        flag1 = flag2 = False
+        for letter  in line:
+            if (letter == '@'):
+                code = ""
+                flag1 = True
+
+            if (flag1 and letter == '{'):
+                flag2 = True
+
+            elif (flag2 and letter != ','):
+                code += letter
+
+            if (flag2 and letter == ','):
+                if code not in codelist:
+                    codelist.append(code)
+                entries[code] = line
+                newline = line 
+                while (newline.strip()):
+                    newline = INFILE.readline()
+                    entries[code] += newline 
+                break
+    OUTFILE.write("The unsorted list of entry codes:\n\n")
+    for code in codelist:
+        OUTFILE.write(code + "\n")
+
+    codelist.sort()
+    
+
+    for code in codelist:
+        SOUTFILE.write(entries[code])
+
+    return
+
+
+def counttypes(INFILE):
+    global count
+    global entrycount
+    for line in INFILE:
+        flag = False
+        for letter  in line:
+            if (letter == '@'):
+                entrytype = ""
+                flag = True
+                entrycount+=1
+                continue
+            if (flag and letter != '{'):
+                entrytype += letter
+
+            if (flag and letter == '{'):
+                # print (entrytype)
+                if entrytype in count:
+                    count[entrytype] += 1
+                else:
+                    count[entrytype] = 1
+                break
+    return count,entrycount
+
+    
+def writecounts(INFILE):
+    global count       
+    global entrycount  
+    count,entrycount=counttypes(INFILE)
+    print("Counts of the types of entries\n\n")
+    for entrytype in count.keys():             
+        print (entrytype, count[entrytype])
+
+    print ("The total number of entries is ", entrycount)
+    return
+    
+
+def journal(INFILE, OUTFILE):
+    global journallist
+    for line in INFILE:
+        lowerline = line.lower()
+        if "journal" in lowerline:
+            nextline = INFILE.readline() # This, and the next four lines handle the case that
+                                         # the journal name is on two lines. We recognize this
+                                         # by the condition that the next line does not contain
+                                         # an = sign.
+            if "="  not in nextline:
+                lenl = len(line)
+                line = line[:lenl-1]     # this gets rid of the newline character at the end of
+                                         # the line
+                line += nextline         # concatenate the line and the nextline
+
+            sections = line.split("=")
+            journalname = sections[1]
+#           print (journalname)
+
+            endcharacters = ('"', '{', ' ', ',', '}', '\n' )
+            i = 0
+            while (journalname[i] in endcharacters):
+                i += 1
+            j = -1 
+            while (journalname[j] in endcharacters):
+                j -= 1
+            journalname = journalname[i:j+1]
+#           print (journalname)
+
+            if journalname not in journallist:
+                journallist.append(journalname)
+
+    journallist.sort()
+    OUTFILE.write("\n\nThe sorted list of journal names: \n\n")
+    for journalname in journallist:
+        #print (journalname)
+        OUTFILE.write(journalname + "\n")
+
+    return
