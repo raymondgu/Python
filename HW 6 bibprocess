@@ -1,0 +1,5 @@
+import bibmain
+
+bibmain.main()
+
+input("press enter to exit")
