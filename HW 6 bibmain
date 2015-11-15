@@ -1,0 +1,31 @@
+import bibfunctions
+def main():
+    while True:
+        rfile=bibfunctions.askfile("Which file is the input file?")
+        try:
+            INFILE=open(rfile, "r")
+            break
+        except IOError as e:
+            print('''The file you entered does not exist under the directory.
+                    Please try again.''')
+            print(e)
+    
+    INFILE=open(rfile, "r")
+    lfile=bibfunctions.askfile("Which file will be used to list the entry codes and\
+ journal names?")
+    OUTFILE=open(lfile, "w")
+    sorted_bibfile=bibfunctions.askfile("Which file will be used to write the sorted\
+ bibfile?")
+    SOUTFILE=open(sorted_bibfile, "w")
+    bibfunctions.code(INFILE,OUTFILE,SOUTFILE)
+    INFILE.close()
+    INFILE=open(rfile, "r")
+    bibfunctions.counttypes(INFILE)
+    bibfunctions.writecounts(INFILE)
+    INFILE.close()
+    INFILE=open(rfile, "r")
+    bibfunctions.journal(INFILE,OUTFILE)
+    INFILE.close()
+    OUTFILE.close()
+    SOUTFILE.close()
+    return
