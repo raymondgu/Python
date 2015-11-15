@@ -1,0 +1,66 @@
+file = open("bibfile.txt", "r")
+listfile = open("listfile.txt", "w")
+
+k = 0
+word = ""
+title = ""
+whole = file.read()
+articlelist = []
+journallist = []
+
+for i in range(len(whole)):
+        if whole[i+k] == "@":
+                while whole[i+k] != "{":
+                        k+=1
+                k+=1
+                while whole[i+k] != ",":
+                    word += whole[i+k]
+                    k+=1
+                word = word + "\n"
+                if word not in articlelist:
+                    articlelist += [word]
+                word = ""
+                k=0
+
+        if whole[i:i+7].lower() == "journal":
+            i = i+10
+            if whole[i+k] == "{":
+                k+=1
+                while whole[i+k] != "}":
+                    title += whole[i+k]
+                    k +=1
+                k +=1
+                while whole[i+k] != ",":
+                    title += whole[i+k]
+                    k += 1
+            elif whole[i+k] == "\"":
+                k +=1
+                while whole[i+k] != "\"":
+                    title += whole[i+k]
+                    k+=1
+                k+=1
+                while whole[i+k] != ",":
+                    title += whole[i+k]
+                    k += 1
+            title = title + "\n"
+            if title not in journallist:
+                journallist += [title]
+            title = ""
+            k=0
+file.close()
+
+file = open("bibfile.txt","r")
+line = file.readline()
+articles = 0
+books = 0
+for line in file:
+    if line[1:5] == "book":
+        books +=1
+    if line[1:8] == "article":
+        articles +=1
+print("There are", articles, "articles in the file.")
+print("There are", books, "books in the file.")
+            
+masterlist = articlelist + journallist
+listfile.writelines(masterlist)
+listfile.close()
